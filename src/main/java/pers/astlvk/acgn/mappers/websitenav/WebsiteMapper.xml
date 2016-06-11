@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="WebsiteMapper">
+  <resultMap type="website" id="websiteMap">
+  	<result column="id" property="id" jdbcType="INTEGER"/>
+  	<result column="typeId" property="typeId" jdbcType="INTEGER"/>
+  	<result column="name" property="name" jdbcType="VARCHAR"/>
+  	<result column="url" property="url" jdbcType="VARCHAR"/>
+  	<result column="introduce" property="introduce" jdbcType="VARCHAR"/>
+  	<result column="imgUrl" property="imgUrl" jdbcType="VARCHAR"/>
+  	<result column="createDate" property="createDate" jdbcType="DATE"/>
+  	<result column="updateDate" property="updateDate" jdbcType="DATE"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+  	id, typeId, name, url, introduce, imgUrl, createDate, updateDate
+  </sql>
+  <select id="countWebsite" resultType="int" parameterType="Map">
+  	SELECT COUNT(id) FROM website 
+	<where>
+		<if test="param != null and param.typeId != null and param.typeId != 0">
+			typeId = #{param.typeId}
+		</if>
+		<if test="param != null and param.name != null and param.name != ''">
+			AND name = #{param.name}
+		</if>
+	</where>
+  </select>
+  <select id="getWebsitePagination" resultMap="websiteMap" parameterType="Map">
+  	SELECT <include refid="Base_Column_List"/> FROM website 
+	<where>
+		<if test="param != null and param.typeId != null and param.typeId != 0">
+			typeId = #{param.typeId}
+		</if>
+		<if test="param != null and param.name != null and param.name != ''">
+			AND name = #{param.name}
+		</if>
+	</where>
+	LIMIT #{offset}, #{pageSize}
+  </select>
+  <insert id="addWebsiteOnlyName" parameterType="website" useGeneratedKeys="true" keyProperty="id">
+  	INSERT INTO website(name, typeId) VALUES(#{name}, 1)
+  </insert>
+  <delete id="delWebsiteById" parameterType="int">
+  	DELETE FROM website WHERE id = #{id}
+  </delete>
+  <delete id="delWebsiteByTypeId" parameterType="int">
+  	DELETE FROM website WHERE typeId = #{typeId}
+  </delete>
+  <update id="updateWebsiteById" parameterType="website">
+  	UPDATE website
+  	<set>
+  		<if test="typeId != null and typeId != 0">
+  			typeId = #{typeId},
+  		</if>
+  		<if test="name != null and name != ''">
+  			name = #{name},
+  		</if>
+  		<if test="url != null">
+  			url = #{url},
+  		</if>
+  		<if test="introduce != null">
+  			introduce = #{introduce},
+  		</if>
+  		<if test="imgUrl != null">
+  			imgUrl = #{imgUrl}
+  		</if>
+  		WHERE id = #{id}
+  	</set>
+  </update>
+</mapper>

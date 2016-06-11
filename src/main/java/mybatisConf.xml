@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+		<setting name="callSettersOnNulls" value="true" />
+		<setting name="cacheEnabled" value="true" />
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+	<typeAliases>
+		<package name="pers.astlvk.acgn.entity"/>
+	</typeAliases>
+	<mappers>
+		<mapper resource="pers/astlvk/acgn/mappers/user/ZeroFlagMapper.xml"/>
+		<mapper resource="pers/astlvk/acgn/mappers/user/UserMapper.xml"/>
+		<mapper resource="pers/astlvk/acgn/mappers/websitenav/WebTypeMapper.xml"/>
+		<mapper resource="pers/astlvk/acgn/mappers/websitenav/WebsiteMapper.xml"/>
+	</mappers>
+</configuration>

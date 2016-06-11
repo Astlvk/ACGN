@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-4.2.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.2.xsd 
+	http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context-4.2.xsd
+    http://www.springframework.org/schema/mvc  
+    http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd ">
+    <!-- 包扫描,注解bean自动装配。排除控制层下@controller注解的bean的装配-->
+	<context:component-scan base-package="pers.astlvk.acgn">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	<!-- 数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://localhost:3306/acgndb?useSSL=false"/>
+		<property name="username" value="root"/>
+		<property name="password" value="okay"/>
+	</bean>
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!-- sqlSession工厂 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:mybatisConf.xml"/>
+	</bean>
+	<!-- sqlSessionTemplate -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory"/>
+	</bean>
+	<!--UTIL  -->
+	<!--验证码  -->
+	<bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">  
+        <property name="config">  
+            <bean class="com.google.code.kaptcha.util.Config">  
+                <constructor-arg>  
+                    <props>  
+                        <prop key="kaptcha.border">no</prop>  
+                        <prop key="kaptcha.border.color">135,206,250</prop>  
+                        <prop key="kaptcha.textproducer.font.color">28,134,238</prop><!--198,226,255; 28,134,238;  -->  
+                        <prop key="kaptcha.image.width">125</prop>  
+                        <prop key="kaptcha.image.height">42</prop>  
+                        <prop key="kaptcha.textproducer.font.size">36</prop>  
+                        <prop key="kaptcha.session.key">code</prop>  
+                        <prop key="kaptcha.textproducer.char.length">4</prop>  
+                        <prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>
+                        <prop key="kaptcha.noise.color">gray</prop> 
+                        <prop key="kaptcha.textproducer.char.string">abcde0f2g1h3i4g5k7l9m6n8opqrstuvwxyz</prop>
+                        <prop key="kaptcha.textproducer.char.space">4</prop>
+                        <prop key="kaptcha.background.clear.from">205,201,165</prop>  
+                        <prop key="kaptcha.background.clear.to">219,219,219</prop>
+                    </props>  
+                </constructor-arg>  
+            </bean>  
+        </property>  
+    </bean>
+</beans>

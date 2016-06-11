@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="pers.astlvk.acgn.dao.user.AdminMapper" >
+  <resultMap id="BaseResultMap" type="pers.astlvk.acgn.entity.user.Admin" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="aname" property="aname" jdbcType="VARCHAR" />
+    <result column="apass" property="apass" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, aname, apass
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from admin
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from admin
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="pers.astlvk.acgn.entity.user.Admin" >
+    insert into admin (id, aname, apass
+      )
+    values (#{id,jdbcType=INTEGER}, #{aname,jdbcType=VARCHAR}, #{apass,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="pers.astlvk.acgn.entity.user.Admin" >
+    insert into admin
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="aname != null" >
+        aname,
+      </if>
+      <if test="apass != null" >
+        apass,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="aname != null" >
+        #{aname,jdbcType=VARCHAR},
+      </if>
+      <if test="apass != null" >
+        #{apass,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="pers.astlvk.acgn.entity.user.Admin" >
+    update admin
+    <set >
+      <if test="aname != null" >
+        aname = #{aname,jdbcType=VARCHAR},
+      </if>
+      <if test="apass != null" >
+        apass = #{apass,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="pers.astlvk.acgn.entity.user.Admin" >
+    update admin
+    set aname = #{aname,jdbcType=VARCHAR},
+      apass = #{apass,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

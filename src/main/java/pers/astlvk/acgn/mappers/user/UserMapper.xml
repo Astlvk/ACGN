@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="UserMapper">
+	<resultMap id="BaseResultMap" type="user">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="pwd" property="pwd" jdbcType="VARCHAR" />
+		<result column="auz" property="auz" jdbcType="INTEGER"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, name, pwd, auz
+	</sql>
+	<select id="getUserByName" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		 FROM user WHERE name = #{name}
+	</select>
+	<insert id="addUser" parameterType="user">
+		INSERT INTO user(name, pwd
+			<if test="auz != null and auz != 0 ">
+				,auz
+			</if>
+		)	VALUES(#{name}, #{pwd}
+			<if test="auz != null and auz != 0 ">
+				, #{auz}
+			</if>
+		)
+	</insert>
+</mapper>

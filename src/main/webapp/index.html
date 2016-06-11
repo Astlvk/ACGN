@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MyHtml.html</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <!-- <meta name="content-type" content="text/html; charset=UTF-8"> -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="/ACGN/dist/pintuer.css">
+    <style>
+    	.a {
+    		margin: 40px auto 20px;
+    		width: 100px;
+    		background-color: pink;
+    	}
+    </style>
+  </head>
+  
+  <body>
+    <div class="container text-center">
+   		<div id="app" class="lrMod">
+   			<h1>{{msg}}</h1>
+   			<div>
+   				<h3>{{vueResource}}</h3>
+   			</div>
+   		</div>
+    </div>
+    <!-- <script src="http://localhost:8090/test.js"></script> -->
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/ACGN/dist/vue.js"></script>
+    <script src="/ACGN/dist/vue-resource.js"></script>
+    <script>
+    	Vue.use(VueResource);
+    	var vm = new Vue({
+    		el: '#app',
+    		data: {
+    			msg: 'Vue',
+    			vueResource: ''
+    		},
+    		created: function () {
+    			//alert('created');
+    			//this.vr();
+    			//this.jqTest(this);
+    			this.xhrv();
+    		},
+    		methods: {
+    			vr: function () {
+    				this.$http.get(
+    					'/ACGN/vueTest.acgn'
+    				).then(
+    					function (response) {
+    						this.vueResource = response.data;
+    					},
+    					function (response) {
+    						alert('Error: ' + response.statusText + ' Code: ' + response.status);
+    					}
+    				);
+    			},
+    			jqTest: function (vm) {
+    				$.ajax({
+    					url: '/ACGN/vueTest.acgn',
+    					type: 'get',
+    					data: null,
+    					dataType: 'json',
+    					success: function (data) {
+    						vm.vueResource = data;
+    					},
+    					error: function (xhr, msg, errObj) {
+    						alert('Error: ' + msg);
+    					}
+    				});
+    			},
+    			xhrv: function () {
+    				var xhr = new XMLHttpRequest();
+    				xhr.onreadystatechange = function () {
+    					if (xhr.readyState == 4 && xhr.status == 200) {
+    						alert(xhr.responseText);
+    					}
+    				};
+    				xhr.open('GET', '/ACGN/vueTest.acgn', true);
+    				xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    				xhr.send();
+    			}
+    		}
+    	})
+    </script>
+  </body>
+</html>
