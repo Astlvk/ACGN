@@ -1,12 +1,24 @@
 var webpack = require('webpack');
 module.exports = {
-	Plugins : [ new webpack.ProvidePlugin({
-		//把jquery模块暴露成一些全局变量，这样就不需要require('jquery')了
-		$: 'jquery',
-		jQuery: 'jquery',
-		'window.jQuery': 'jquery',
-		// Asv: 'asv'//这里配置web_modules目录下的依赖，无效。使用路径也无效果。
-	}) ],
+	Plugins : [
+	    new webpack.ProvidePlugin({
+			//把jquery模块暴露成一些全局变量，这样就不需要require('jquery')了
+			$: 'jquery',
+			jQuery: 'jquery',
+			'window.jQuery': 'jquery',
+			// Asv: 'asv'//这里配置web_modules目录下的依赖，无效。使用路径也无效果。
+		}),
+		new webpack.DefinePlugin({
+	      'process.env': {
+	        NODE_ENV: '"production"'
+	      }
+	    }),
+	    new webpack.optimize.UglifyJsPlugin({
+	      compress: {
+	        warnings: false
+	      }
+	    })
+	],
 	entry : {
 		astlvk : './src/main.js'
 	},
