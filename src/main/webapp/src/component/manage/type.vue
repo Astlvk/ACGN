@@ -34,7 +34,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="type of webTypes | filterBy search in 'name' | myFilter | limitBy pageSize offset">
+          <tr v-for="type of arr">
             <td>{{type.id}}</td>
             <td>
               <input v-model="type.name" @change="update(type, $event)" class="input input-small" type="text" maxlength="30"/>
@@ -79,19 +79,27 @@
       }
     },
     computed: {
-      offset () {
-        //这里主要就是根据currPage生成下offset, 然后交给v-for 和 过滤器处理dom
-        //这里因为父组件传来的webType默认值是null，所以第一次传进来的时候调用webType的相关属性方法或报错。
-        // 同样适用limitBy过滤webType报空指针的原因也在这里。
-        let rows = this.rows;
-        this.allPage = rows % this.pageSize == 0 ? rows / this.pageSize : Math.floor(rows / this.pageSize + 1);
+      arr () {
+        let newArr = [];
+        if (this.search) {//不为空开始过滤
+          newArr = this.webTypes.filter(function (item) {//注意this指向, 可以直接箭头函数
+            let lcA = item.name.toLocaleLowerCase();
+            let lcB = this.search.toLocaleLowerCase();
+            return lcA.indexOf(lcB) > -1;
+          }, this);
+        } else {
+          newArr = this.webTypes;
+        }
+        this.rows = newArr.length;
+        this.allPage = this.rows % this.pageSize == 0 ? this.rows / this.pageSize : Math.floor(this.rows / this.pageSize + 1);
         if (this.currPage < 1) {
           this.currPage = 1;
         } else if (this.currPage > this.allPage && this.allPage > 0) {
           this.currPage = this.allPage;
         }
-        return (this.currPage - 1) * this.pageSize;
-      }
+        let offset = (this.currPage - 1) * this.pageSize;
+        return newArr.slice(offset, offset + this.pageSize);
+      },
     },
     created () {
       this.initInfo();
@@ -182,12 +190,5 @@
         this.currPage < this.allPage ? this.currPage = this.allPage : {};
       },
     },
-    filters: {
-      //中转过滤器，主要是想用于把filterBy过滤的结果转存入当前vm管理的属性中,以供能数据驱动视图
-      myFilter (arr) {
-        this.rows = arr.length;
-        return arr;
-      }
-    }
   }
 </script>
