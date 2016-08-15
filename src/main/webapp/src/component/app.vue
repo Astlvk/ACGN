@@ -16,54 +16,52 @@
 
 <template>
   <div>
-      <h1>{{msg}}</h1>{{time}}
-      <button @click="handover" type="button" class="button button-little">handover</button>
-      <hr />
-      <router-view transition="fade" transition-mode="out-in"></router-view>
+    <h1>{{msg}}</h1>
+    <count-time></count-time>
+    <button @click="handover" type="button" class="button button-little">handover</button>
+    <hr />
+    <transition mode="out-in"
+      appear
+      appear-active-class="fadein-right"
+      enter-active-class="fadein-right"
+      leave-active-class="fadeout-left">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
-  import store from '../vuex/store'
-  import {getEventBus} from '../vuex/getters'
+  // import store from '../vuex/store'
+  // import {getEventBus} from '../vuex/getters'
+  import countTime from './countTime'
   export default {
-      store,
+      // store,
       data () {
         return {
             msg: 'This is Root container Module',
-            time: new Date()
+            time: Date(),
+            view: 'v-a'
         };
       },
       created () {
-        this.countTime();
-        this.eventBus.$on('login-success', (msg) => this.$route.router.go(msg));
-        this.eventBus.$on('reg-success', () => this.$route.router.go('/login'));
+        console.log(this.$route);
+        // this.eventBus.$on('login-success', (msg) => this.$route.router.go(msg));
+        // this.eventBus.$on('reg-success', () => this.$route.router.go('/login'));
       },
-      vuex: {
-        getters: {
-          eventBus: getEventBus,
-        }
+      // vuex: {
+      //   getters: {
+      //     eventBus: getEventBus,
+      //   }
+      // },
+      components: {
+        countTime,
       },
       methods: {
           handover () {
-            let route = this.$route;
-            let path = route.path;
+            let path = this.$route.path;
             path == '/login' || path == '/' ? path = '/reg' : path = '/login';
-            route.router.go(path);
+            this.$router.push(path);
           },
-          countTime () {
-            setInterval(() => {
-              this.time = new Date();
-            }, 1000);
-          }
-      },
-      transitions: {
-          fade: {
-              enterClass: 'fadein-right',
-              leaveClass: 'fadeout-left'
-              // enterClass: 'bouncein',
-              // leaveClass: 'bounceout'
-          }
       }
   }
 </script>

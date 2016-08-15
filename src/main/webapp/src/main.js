@@ -1,6 +1,7 @@
 /**
  * vue应用webpack打包入口
  */
+// import Vue from 'vue/dist/vue'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
@@ -14,28 +15,37 @@ Vue.use(VueResource);
 // Vue.http.headers.common['content-Type'] = 'application/json';
 // Vue.http.headers.common['content-Type'] = 'application/x-www-form-urlencoded';
 Vue.http.options.emulateJSON = true;
+// const router = new VueRouter({
+//   transitionOnLoad: true
+// });
+
+// router.map({
+// 	'/': {
+//     component: login
+//   },
+//   '/login': {
+//     component: login
+//   },
+//   '/reg': {
+//     component: reg
+//   },
+//   '/manage': {
+//     component: function (resolve) {
+//       require.ensure(['./component/manage/manage'], function (require) {
+//         var manage = require('./component/manage/manage');
+//         resolve(manage);
+//       }, 'manage');
+//     }
+//   }
+// });
+//
+// router.start(app, '#app');
 const router = new VueRouter({
-  transitionOnLoad: true
-});
-
-router.map({
-	'/': {
-    component: login
-  },
-  '/login': {
-    component: login
-  },
-  '/reg': {
-    component: reg
-  },
-  '/manage': {
-    component: function (resolve) {
-      require.ensure(['./component/manage/manage'], function (require) {
-        var manage = require('./component/manage/manage');
-        resolve(manage);
-      }, 'manage');
-    }
-  }
-});
-
-router.start(app, '#app');
+  routes: [
+    {path: '/', component: login},
+    {path: '/login', component: login},
+    {path: '/reg', component: reg},
+  ]
+})
+const vm = Vue.extend(app)
+new vm({router}).$mount('#app')

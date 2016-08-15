@@ -28,7 +28,7 @@
       this.initCheck();//检查是否已初始化用户
     },
     //注意ready和attached 区别,
-    ready () {//组件dom就绪后绑定表单相关元素
+    mounted () {//组件dom就绪后绑定表单相关元素
       Asv.autoValidateBind('#login', '', 'border-red');
     },
     vuex: {
@@ -40,7 +40,8 @@
       initCheck () {
           this.$http.get('/ACGN/api.initCheck.acgn').then(
             function (response) {
-              this.$route.router.go(response.data.path); //切换组件
+              // this.$route.router.go(response.data.path); //切换组件
+              this.$router.push(response.data.path); //切换组件
             },
             function (response) {
               alert("app Module initCheck Error: " + response.statusText);
