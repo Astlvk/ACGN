@@ -1,5 +1,7 @@
 /**
  * getters函数
  */
-export const getEventBus = (state) => state.eventBus;
-export const getWebTypes = (state) => state.webTypes;
+export default {
+  eventBus: (state) => state.eventBus,
+  webTypes: (state) => state.webTypes,
+}

@@ -37,7 +37,7 @@
           <tr v-for="type of arr">
             <td>{{type.id}}</td>
             <td>
-              <input v-model="type.name" @change="update(type, $event)" class="input input-small" type="text" maxlength="30"/>
+              <input v-model="type.name" @change="update(type)" class="input input-small" type="text" maxlength="30"/>
             </td>
             <td>
               <button @click="del(type)" class="button button-little" type="button">Del</button>
@@ -65,7 +65,6 @@
 </template>
 
 <script>
-  import {getEventBus, getWebTypes} from '../../vuex/getters'
   export default {
     data () {
       return {
@@ -79,6 +78,12 @@
       }
     },
     computed: {
+      eventBus () {
+        return this.$store.getters.eventBus
+      },
+      webTypes () {
+        return this.$store.getters.webTypes
+      },
       arr () {
         let newArr = [];
         if (this.search) {//不为空开始过滤
@@ -104,73 +109,21 @@
     created () {
       this.initInfo();
     },
-    vuex: {
-      getters: {
-        eventBus: getEventBus,
-        webTypes: getWebTypes,
-      },
-      actions: {
-        initInfo ({dispatch}) {
-          this.$http.get('/ACGN/mapi/api.getAllType.acgn').then(
-            (response) => {
-              dispatch('UPDATEWEBTYPES', response.data.webTypes);
-            },
-            (response) => {
-              alert('WebType Module initInfo() Error: ' + response.statusText);
-            }
-          )
-        },
-        add ({dispatch}, name) {
-          if (name) {
-            this.$http.post(
-              '/ACGN/mapi/api.addWebType.acgn',
-              {name: name}
-            ).then(
-              function (response) {
-                response.data.infoFlag == 'addFailed' ? alert(response.data.infoFlag) : (
-                    dispatch('ADDWEBTYPE', {id: response.data.id, name: name}),
-                    this.name = ''
-                );
-              },
-              function (response) {
-                alert('WebType Module add() Error: ' + response.statusText)
-              });
-          } else {
-            alert('not null');
-          }
-        },
-        update ({dispatch}, type, e) {
-          this.$http.post(
-            '/ACGN/mapi/api.updateWebTypeById.acgn',
-            {id: type.id, name: e.target.value}
-          ).then(
-            function (response) {
-              response.data == 'updateFailed' ? alert(response.data) : dispatch('UPDATEWEBTYPE', type.id, e.target.value);
-            },
-            function (response) {
-              alert("WebType Module update() Error: " + response.statusText);
-            }
-          )
-        },
-        del ({dispatch}, type) {
-          this.$http.post(
-            '/ACGN/mapi/api.delWebTypeById.acgn',
-            {id: type.id}
-          ).then(
-            function (response) {
-              response.data == 'delFailed' ? alert(response.data) : (
-                dispatch('DELWEBTYPE', type),
-                this.eventBus.$emit('webTypeDelSuccess')
-              );
-            },
-            function (response) {
-              alert("WebType Module del() Error: " + response.statusText);
-            }
-          )
-        },
-      }
-    },
     methods: {
+      initInfo () {
+        this.$store.dispatch('initInfo')
+      },
+      add (name) {
+        this.$store.dispatch('add', name).then(() => {this.name = ''})
+      },
+      update (type) {
+        this.$store.dispatch('update', type)
+      },
+      del (type) {
+        this.$store.dispatch('del', type).then(() => {
+          this.eventBus.$emit('webTypeDelSuccess')
+        })
+      },
       test () {
         alert(JSON.stringify(this.webTypes));
       },

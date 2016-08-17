@@ -31,11 +31,10 @@
 </template>
 
 <script>
-  // import store from '../vuex/store'
-  // import {getEventBus} from '../vuex/getters'
+  import store from './vuex/store'
   import countTime from './countTime'
   export default {
-      // store,
+      store,
       data () {
         return {
             msg: 'This is Root container Module',
@@ -43,16 +42,16 @@
             view: 'v-a'
         };
       },
-      created () {
-        console.log(this.$route);
-        // this.eventBus.$on('login-success', (msg) => this.$route.router.go(msg));
-        // this.eventBus.$on('reg-success', () => this.$route.router.go('/login'));
+      computed: {
+        eventBus () {
+          return this.$store.getters.eventBus
+        }
       },
-      // vuex: {
-      //   getters: {
-      //     eventBus: getEventBus,
-      //   }
-      // },
+      created () {
+        // console.log(this.$route);
+        this.eventBus.$on('login-success', (msg) => this.$router.push(msg));
+        this.eventBus.$on('reg-success', () => this.$router.push('/login'));
+      },
       components: {
         countTime,
       },

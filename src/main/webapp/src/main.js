@@ -45,6 +45,12 @@ const router = new VueRouter({
     {path: '/', component: login},
     {path: '/login', component: login},
     {path: '/reg', component: reg},
+    {path: '/manage', component: function (resolve) {
+        require.ensure(['./component/manage/manage'], function (require) {
+          var manage = require('./component/manage/manage');
+          resolve(manage);
+        }, 'manage');
+      }},
   ]
 })
 const vm = Vue.extend(app)

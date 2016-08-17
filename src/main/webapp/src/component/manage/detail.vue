@@ -12,7 +12,7 @@
           <div class="form-group">
             <div class="field">
               <select v-model="searchType" class="input input-small">
-                <option value="0">请选择</option>
+                <option :value="0">请选择</option>
                 <option v-for="type of webTypes" :value="type.id">{{type.name}}</option>
               </select>
             </div>
@@ -54,13 +54,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="web of webs" @change="update(web)">
+          <tr v-for="web of webs" @change="update(web, $event)">
             <td>{{web.id}}</td>
             <td>
               <input v-model="web.name" class="input input-small" type="text" maxlength="30"/>
             </td>
             <td>
-              <select v-model="web.typeId" class="input input-small selectWidth">
+              <select v-model="web.typeId" class="input input-small selectWidth" id="sk">
                 <option v-for="type of webTypes" :value="type.id">{{type.name}}</option>
               </select>
             </td>
@@ -99,7 +99,6 @@
 </template>
 
 <script>
-  import {getEventBus, getWebTypes} from '../../vuex/getters'
   export default {
     data () {
       return {
@@ -113,6 +112,12 @@
       }
     },
     computed: {
+      eventBus () {
+        return this.$store.getters.eventBus
+      },
+      webTypes () {
+        return this.$store.getters.webTypes
+      },
       row () {
         return this.webDetails.rows;
       },
@@ -135,12 +140,6 @@
       this.initInfo();
       this.eventBus.$on('webTypeDelSuccess', () => this.getPagination());
     },
-    vuex: {
-      getters: {
-        eventBus: getEventBus,
-        webTypes: getWebTypes,
-      }
-    },
     methods: {
       test () {
         alert(this.typeId);
@@ -155,7 +154,7 @@
           param
         ).then(
           function (response) {
-            this.webDetails = response.data;
+            this.webDetails = response.json();
           },
           function (response) {
             alert('WebDetails Module getPagination() Error: ' + response.statusText);
@@ -198,7 +197,7 @@
           ).then(
             function (response) {
               this.name = '';
-              response.data == 'addSuccess' ? this.getPagination() : alert(response.data);
+              response.text() == 'addSuccess' ? this.getPagination() : alert(response.text());
             },
             function (response) {
               alert('WebDetails Module add() Error: ' + response.statusText);
@@ -214,14 +213,15 @@
           {id: web.id}
         ).then(
           function (response) {
-            response.data == 'delSuccess' ? this.getPagination() : alert(response.data);
+            response.text() == 'delSuccess' ? this.getPagination() : alert(response.text());
           },
           function (response) {
             alert('WebDetails Module del() Error: ' + response.statusText);
           }
         )
       },
-      update (web) {//时间类型真的讨厌
+      update (web, e) {//时间类型真的讨厌
+        if (web.typeId === undefined) return// 针对webtype删除后会影响detail的type项change的处理
         if (web.name) {
           this.$http.post(
             '/ACGN/mapi/api.updateWebsiteById.acgn',
@@ -235,7 +235,7 @@
             }
           ).then(
             function (response) {
-              response.data == 'updateFailed' ? alert(response.data) : {};
+              response.text() == 'updateFailed' ? alert(response.text()) : {};
             },
             function (response) {
               alert('WebDetails Module update() Error: ' + response.statusText);

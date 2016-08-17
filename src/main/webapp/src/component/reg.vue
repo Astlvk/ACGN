@@ -19,7 +19,6 @@
   import 'jquery.md5'
   import 'security'
   import Asv from 'asv'
-  import {getEventBus} from '../vuex/getters'
   export default {
     data () {
       return {
@@ -31,16 +30,16 @@
         M: ''
       };
     },
+    computed: {
+      eventBus () {
+        return this.$store.getters.eventBus
+      }
+    },
     created () {
       this.getEM();
     },
-    ready () {
+    mounted () {
       Asv.autoValidateBind('#reg', '', 'border-red');
-    },
-    vuex: {
-      getters: {
-        eventBus: getEventBus
-      }
     },
     methods: {
       reg: function() {
@@ -59,8 +58,8 @@
           };
           this.$http.post('/ACGN/api.reg.acgn', param).then(
             function (response) {
-              alert(response.data.infoFlag);
-              if (response.data.infoFlag == '注册成功') {
+              alert(response.json().infoFlag);
+              if (response.json().infoFlag == '注册成功') {
                   this.eventBus.$emit('reg-success');
               }
             },
@@ -77,8 +76,8 @@
       getEM () {
           this.$http.get('/ACGN/api.getEM.acgn').then(
             function (response) {
-              this.E = response.data.E;
-              this.M = response.data.M;
+              this.E = response.json().E;
+              this.M = response.json().M;
             },
             function (response) {
               alert('Reg Module getEM Error: ' + response.statusText);

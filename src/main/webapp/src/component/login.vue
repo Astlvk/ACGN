@@ -15,7 +15,6 @@
 
 <script>
   import Asv from 'asv'
-  import {getEventBus} from '../vuex/getters'
   export default {
     data () {
       return {
@@ -24,24 +23,23 @@
         code: ''
       }
     },
+    computed: {
+      eventBus () {
+        return this.$store.getters.eventBus//事件总线对象，全局性控制vue自定义事件
+      }
+    },
     created () {
       this.initCheck();//检查是否已初始化用户
     },
-    //注意ready和attached 区别,
+    //注意每个生命周期的 区别&特点,
     mounted () {//组件dom就绪后绑定表单相关元素
       Asv.autoValidateBind('#login', '', 'border-red');
-    },
-    vuex: {
-      getters: {
-        eventBus: getEventBus,//事件总线对象，全局性控制vue自定义事件
-      }
     },
     methods: {
       initCheck () {
           this.$http.get('/ACGN/api.initCheck.acgn').then(
             function (response) {
-              // this.$route.router.go(response.data.path); //切换组件
-              this.$router.push(response.data.path); //切换组件
+              this.$router.push(response.json().path); //切换组件
             },
             function (response) {
               alert("app Module initCheck Error: " + response.statusText);
@@ -66,10 +64,10 @@
         };
         this.$http.post('/ACGN/api.login.acgn', param).then(
           function (response) {
-            if (response.data.infoFlag == '登陆成功') {
-              this.eventBus.$emit('login-success', response.data.path);
+            if (response.json().infoFlag == '登陆成功') {
+              this.eventBus.$emit('login-success', response.json().path);
             } else {
-              alert(response.data.infoFlag);
+              alert(response.json().infoFlag);
             }
           },
           function (response) {
